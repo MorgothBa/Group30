@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belépés</title>
+    <link rel="stylesheet" href="login_style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Üdvözöljük a Moodleban!</h1>
+        
+        <!-- Authentikáció kell -->
+        <form action="login.php" method="post">
+            <div class="form-group">
+                <label for="username">Felhasználónév:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Jelszó:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Belépés</button>
+        </form>
+        <!-- Authentikáció kell -->
+
+    </div>
+</body>
+</html>
