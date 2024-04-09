@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Moodle.Data;
 using Moodle.Models;
 
 namespace Moodle.Controllers
 {
-    public class CoursesController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CoursesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
@@ -19,25 +19,29 @@ namespace Moodle.Controllers
             _context = context;
         }
 
-        // GET: Courses
+        // GET: api/Courses
+        [HttpGet("Index")] 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Courses.ToListAsync());
+            return Ok(await _context.Courses.ToListAsync());
         }
 
-        // GET: Courses/ShowSearchForm
+        // GET: api/Courses/ShowSearchForm
+        [HttpGet("ShowSearchForm")] 
         public async Task<IActionResult> ShowSearchForm()
         {
-            return View();
+            return Ok();
         }
 
-        // PoST: Courses/ShowSearchResults
-        public async Task<IActionResult> ShowSearchResults(String SearchPhrase)
+        // POST: api/Courses/ShowSearchResults
+        [HttpPost("ShowSearchResults")] 
+        public async Task<IActionResult> ShowSearchResults(string SearchPhrase)
         {
-            return View("Index", await _context.Courses.Where( j => j.Name.Contains(SearchPhrase)).ToListAsync());
+            return Ok(await _context.Courses.Where(j => j.Name.Contains(SearchPhrase)).ToListAsync());
         }
 
-        // GET: Courses/Details/5
+        // GET: api/Courses/Details/5
+        [HttpGet("Details/{id}")] 
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,64 +49,35 @@ namespace Moodle.Controllers
                 return NotFound();
             }
 
-            var courses = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var courses = await _context.Courses.FirstOrDefaultAsync(m => m.Id == id);
             if (courses == null)
             {
                 return NotFound();
             }
 
-            return View(courses);
+            return Ok(courses);
         }
 
-        // GET: Courses/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Courses/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // POST: api/Courses/Create
+        [HttpPost("Create")] 
         public async Task<IActionResult> Create([Bind("Id,Code,Name,Credit")] Courses courses)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(courses);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Ok(courses);
             }
-            return View(courses);
+            return BadRequest(ModelState);
         }
 
-        // GET: Courses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var courses = await _context.Courses.FindAsync(id);
-            if (courses == null)
-            {
-                return NotFound();
-            }
-            return View(courses);
-        }
-
-        // POST: Courses/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // PUT: api/Courses/Edit/5
+        [HttpPut("Edit/{id}")] 
         public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,Credit")] Courses courses)
         {
             if (id != courses.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -123,42 +98,25 @@ namespace Moodle.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return NoContent();
             }
-            return View(courses);
+            return BadRequest(ModelState);
         }
 
-        // GET: Courses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // DELETE: api/Courses/Delete/5
+        [HttpDelete("Delete/{id}")] 
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var courses = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var courses = await _context.Courses.FindAsync(id);
             if (courses == null)
             {
                 return NotFound();
             }
 
-            return View(courses);
-        }
-
-        // POST: Courses/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var courses = await _context.Courses.FindAsync(id);
-            if (courses != null)
-            {
-                _context.Courses.Remove(courses);
-            }
-
+            _context.Courses.Remove(courses);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return NoContent();
         }
 
         private bool CoursesExists(int id)
@@ -167,3 +125,4 @@ namespace Moodle.Controllers
         }
     }
 }
+
