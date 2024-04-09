@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Moodle.Data;
 using Moodle.Models;
 
 namespace Moodle.Controllers
 {
-    public class UsersController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
@@ -19,13 +19,16 @@ namespace Moodle.Controllers
             _context = context;
         }
 
-        // GET: Users
+        // GET: api/Users/Index
+        [HttpGet("Index")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.User.ToListAsync());
+            return Ok(await _context.User.ToListAsync());
         }
 
-        // GET: Users/Details/5
+        // GET: api/Users/Details/5
+        [HttpGet("Details/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,26 +36,17 @@ namespace Moodle.Controllers
                 return NotFound();
             }
 
-            var user = await _context.User
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return Ok(user);
         }
 
-        // GET: Users/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        // POST: api/Users/Create
+        [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Username,Name,Password,Degree_Id")] User user)
         {
@@ -60,12 +54,13 @@ namespace Moodle.Controllers
             {
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Ok(user);
             }
-            return View(user);
+            return BadRequest(ModelState);
         }
 
-        // GET: Users/Edit/5
+        // GET: api/Users/Edit/5
+        [HttpGet("Edit/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,19 +73,17 @@ namespace Moodle.Controllers
             {
                 return NotFound();
             }
-            return View(user);
+            return Ok(user);
         }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        // PUT: api/Users/Edit/5
+        [HttpPut("Edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Name,Password,Degree_Id")] User user)
         {
             if (id != user.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -111,12 +104,13 @@ namespace Moodle.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Ok(user);
             }
-            return View(user);
+            return BadRequest(ModelState);
         }
 
-        // GET: Users/Delete/5
+        // DELETE: api/Users/Delete/5
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,18 +118,17 @@ namespace Moodle.Controllers
                 return NotFound();
             }
 
-            var user = await _context.User
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _context.User.FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return Ok(user);
         }
 
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: api/Users/Delete/5
+        [HttpPost("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -143,10 +136,10 @@ namespace Moodle.Controllers
             if (user != null)
             {
                 _context.User.Remove(user);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         private bool UserExists(int id)
