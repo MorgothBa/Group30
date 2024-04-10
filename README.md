@@ -1,4 +1,7 @@
-# Moodle 
+# Moodle feladat, 30-as csapat
+- Kiss Bálint
+- Hortobágyi Axel
+- Zsigár Péter
 ## Környezet Beüzemelés
 
 A projektet [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) (64bit) Version 17.9.5 valósítottuk meg.
