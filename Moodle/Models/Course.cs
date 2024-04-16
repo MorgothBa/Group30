@@ -1,6 +1,6 @@
 ﻿namespace Moodle.Models
 {
-    public class Courses
+    public class Course
     {
         public int Id { get; set; }
         public string Code { get; set; }
@@ -11,7 +11,8 @@
         public ICollection<Event> Events { get; set; }
         public ICollection<MyCourse> MyCourses { get; set; }
         public ICollection<ApprovedDegree> ApprovedDegrees { get; set; }
-        public Courses()
+
+        public Course()
         {
                 
         }

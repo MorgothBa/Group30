@@ -60,7 +60,7 @@ namespace Moodle.Controllers
 
         // POST: api/Courses/Create
         [HttpPost("Create")] 
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,Credit")] Courses courses)
+        public async Task<IActionResult> Create([Bind("Id,Code,Name,Credit")] Course courses)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace Moodle.Controllers
 
         // PUT: api/Courses/Edit/5
         [HttpPut("Edit/{id}")] 
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,Credit")] Courses courses)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Name,Credit")] Course courses)
         {
             if (id != courses.Id)
             {

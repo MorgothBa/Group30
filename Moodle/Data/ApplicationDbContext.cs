@@ -11,6 +11,6 @@ namespace Moodle.Data
         {
         }
         public DbSet<Moodle.Models.User> User { get; set; } = default!;
-        public DbSet<Moodle.Models.Courses> Courses { get; set; } = default!;
+        public DbSet<Moodle.Models.Course> Courses { get; set; } = default!;
     }
 }
