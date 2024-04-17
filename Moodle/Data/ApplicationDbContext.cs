@@ -12,5 +12,12 @@ namespace Moodle.Data
         }
         public DbSet<Moodle.Models.User> User { get; set; } = default!;
         public DbSet<Moodle.Models.Course> Courses { get; set; } = default!;
+        /*
+        public DbSet<Degrees> Degrees { get; set; }
+        public DbSet<Approved_degress> Approved_Degresses { get; set; }
+        public DbSet<Events> Events { get; set; }
+        public DbSet<Mycourses> Mycourses { get; set; }
+        public DbSet<Departments> Departments { get; set; }
+        */
     }
 }
