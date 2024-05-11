@@ -5,55 +5,9 @@
 	<title>WebSocket</title>
 </head>
 <body>
-	<h1>WebSocket - jelentkezz egy eseményre!</h1>
-	<br />
-	<select id="programSelect">
-		<option value="1">Matematika verseny</option>
-		<option value="2">Informatika verseny</option>
-		<option value="3">Kémia verseny</option>
-		<option value="4">Fizika verseny</option>
-		<option value="5">Biológia verseny</option>
-	</select>
-	<button id="sendButton">Jelentkezés</button>
-	<ul id="messages">
-	</ul>
-	<script type="text/javascript">
-		var uri = "ws://localhost:5000/ws";
-		var socket;
-
-		function connect() {
-			socket = new WebSocket(uri);
-
-			socket.onopen = function (e) {
-				console.log("connection estabished");
-			};
-			socket.onclose = function (e) {
-				console.log("connection closed");
-			};
-			socket.onmessage = function (e) {
-				appendItem(list, e.data);
-				console.log(e.data);
-			}
-		}
-
-		connect();
-
-		var list = document.getElementById("messages");
-		var button = document.getElementById("sendButton");
-		button.addEventListener("click", function () {
-			var selectedProgram = document.getElementById("programSelect").value;
-			var sendMessage = function (element) {
-				console.log("sending message ----");
-				socket.send(element);
-			};
-			sendMessage(selectedProgram);
-		});
-
-		function appendItem(list, message) {
-			var item = document.createElement("li");
-			item.appendChild(document.createTextNode(message));
-			list.appendChild(item);
-		}
-	</script>
+	<main>
+		<h2 id="webSocket"></h2>
+	</main>
+	<script src="webSocket.js"></script>
 </body>
 </html>

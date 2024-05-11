@@ -1,4 +1,5 @@
-﻿using System.Net.WebSockets;
+﻿using Newtonsoft.Json;
+using System.Net.WebSockets;
 using System.Text;
 
 namespace Moodle.WebSocketManager
@@ -6,16 +7,25 @@ namespace Moodle.WebSocketManager
     public abstract class SocketHandler
     {
         public Connection Connections { get; set; }
+
+        private readonly string _eventsJsonPath = "Data/events.json"; // A JSON fájl elérési útvonala
         public SocketHandler(Connection connections) {
             Connections = connections;
         }
 
-        public virtual async Task OnConnected(WebSocket socket)
+        public virtual async Task OnConnected(System.Net.WebSockets.WebSocket socket)
         {
-            await Task.Run(() =>
-            {
-                Connections.AddSocket(socket);
-            });
+            Connections.AddSocket(socket);
+
+            // Az események beolvasása a JSON fájlból
+            var eventsJson = await File.ReadAllTextAsync(_eventsJsonPath);
+            var events = JsonConvert.DeserializeObject<List<Event>>(eventsJson);
+
+            // Az események JSON formátumba alakítása
+            var eventsJsonString = JsonConvert.SerializeObject(events);
+
+            // Elküldjük az események JSON formátumban a csatlakozott kliensnek
+            await SendMessage(socket, eventsJsonString);
         }
 
         public virtual async Task OnDisconnected(WebSocket socket)
