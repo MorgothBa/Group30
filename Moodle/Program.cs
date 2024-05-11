@@ -1,14 +1,18 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 using Microsoft.OpenApi.Models;
 using Moodle.Data;
+using Moodle.WebSocketManager;
+
+using EventHandler = Moodle.WebSocketManager.Handler.EventHandler; //Talán kell - WebSocket
+using System;
 
 public class Program
 {
     public static async Task Main(string[] args)
     {
-
-
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -25,12 +29,23 @@ public class Program
         {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
         });
+
+        //WebSocket
+        builder.Services.AddWebSocketManager();
+
         var app = builder.Build();
 
+        //WebSocket
+        var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+        var serviceProvider = serviceScopeFactory.CreateScope().ServiceProvider;
+        app.UseWebSockets();
+        app.MapSockets("/ws", serviceProvider.GetService<EventHandler>());
+
         // Configure the HTTP request pipeline.
+        /*
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
+            /*app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
             app.UseMigrationsEndPoint();
         }
@@ -39,7 +54,7 @@ public class Program
             app.UseExceptionHandler("/Home/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
-        }
+        }*/
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
